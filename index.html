@@ -52,18 +52,7 @@
   .chart-wrap canvas { max-height: 360px; }
   .annotation-bar { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
   .anno-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: var(--muted); }
-  .heatmap-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1.5rem; overflow-x: auto; margin-bottom: 2.5rem; }
-  .heatmap-labels-y { display: flex; flex-direction: column; gap: 2px; padding-right: 0.75rem; }
-  .heatmap-label-y { height: 22px; display: flex; align-items: center; font-family: 'DM Mono', monospace; font-size: 0.65rem; white-space: nowrap; }
-  .scale-wrap { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
-  .scale-bar { flex: 1; min-width: 120px; max-width: 280px; height: 8px; border-radius: 4px; background: linear-gradient(to right, var(--away), #444458, var(--home)); }
-  .scale-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); }
-  #tooltip { position: fixed; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 0.65rem 0.9rem; font-size: 0.75rem; pointer-events: none; opacity: 0; transition: opacity 0.1s; z-index: 100; min-width: 170px; }
-  #tooltip.visible { opacity: 1; }
-  .tt-season { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); margin-bottom: 0.3rem; }
-  .tt-div { font-weight: 500; margin-bottom: 0.4rem; }
-  .tt-row { display: flex; justify-content: space-between; gap: 1.5rem; font-size: 0.72rem; color: var(--muted); }
-  .tt-val { font-family: 'DM Mono', monospace; color: var(--text); }
+
   .footnotes { padding: 1.5rem 0; border-top: 1px solid var(--border); }
   .footnote { font-size: 0.72rem; color: var(--muted); line-height: 1.6; margin-bottom: 0.3rem; }
   .footnote strong { font-weight: 500; color: var(--neutral); }
@@ -94,37 +83,18 @@
     <canvas id="lineChart"></canvas>
     <div class="annotation-bar">
       <div class="anno-item"><div style="width:18px;height:1px;border-top:1px dashed #3a3a48"></div>0% parity</div>
-      <div class="anno-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid var(--muted)"></div>Shaded = no fans (2019/20–2020/21)</div>
+      <div class="anno-item"><div style="width:18px;height:0;border-top:1.5px dashed #888"></div>Linear trend</div>
+      <div class="anno-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid var(--muted)"></div>Shaded = no fans (2020/21)</div>
       <div class="anno-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(240,165,0,0.2);border:1px solid var(--accent)"></div>2025/26 = partial season</div>
-    </div>
-  </div>
-
-  <div class="section-title">Season × division heatmap</div>
-  <div class="heatmap-wrap">
-    <div id="heatmap-container"></div>
-    <div class="scale-wrap">
-      <span class="scale-label">← Away dominance</span>
-      <div class="scale-bar"></div>
-      <span class="scale-label">Home dominance →</span>
-      <span class="scale-label" style="margin-left:1rem;color:var(--text)">HGA scale: −5% to +25%</span>
     </div>
   </div>
 
   <div class="footnotes">
     <p class="footnote">† <strong>HGA (Home Goal Advantage)</strong> = (Home goals ÷ Away goals − 1) × 100. A value of 0% means exact parity; a positive value means home teams scored proportionally more goals than away teams in aggregate.</p>
-    <p class="footnote">‡ <strong>National League</strong> data begins 2004/05. Earlier cells are shown as empty.</p>
-    <p class="footnote">§ Seasons <strong>2019/20</strong> and <strong>2020/21</strong> were played partly or entirely behind closed doors due to the COVID-19 pandemic. The sharp drop in HGA during this period is widely attributed to the absence of crowd effects.</p>
+    <p class="footnote">§ Season <strong>2020/21</strong> was played entirely behind closed doors due to the COVID-19 pandemic. The sharp drop in HGA during this period is widely attributed to the absence of crowd effects.</p>
     <p class="footnote">¶ <strong>2025/26</strong> reflects a partial season in progress and should be interpreted with caution.</p>
   </div>
 </main>
-
-<div id="tooltip">
-  <div class="tt-season" id="tt-season"></div>
-  <div class="tt-div" id="tt-div"></div>
-  <div class="tt-row"><span>Home goals</span><span class="tt-val" id="tt-hg"></span></div>
-  <div class="tt-row"><span>Away goals</span><span class="tt-val" id="tt-ag"></span></div>
-  <div class="tt-row"><span>HGA</span><span class="tt-val" id="tt-hga"></span></div>
-</div>
 
 <script>
 const raw = [
@@ -165,7 +135,7 @@ const raw = [
 
 const divisions = ["Premier League","Championship","League 1","League 2","National League"];
 const divColors = {"Premier League":"#f0a500","Championship":"#3b8beb","League 1":"#5dbf6e","League 2":"#c45fc4","National League":"#e05a2b"};
-const noFanSeasons = ["2019/20","2020/21"];
+const noFanSeasons = ["2020/21"];
 const partialSeasons = ["2025/26"];
 
 const allSeasons = [...new Set(raw.map(d => d[1]))].sort();
@@ -227,10 +197,32 @@ function getLineData(divKey) {
   return allSeasons.filter(s => lookup[s]?.[divKey]).map(s => ({ x: s, y: +lookup[s][divKey].hga.toFixed(2) }));
 }
 
+function linReg(data) {
+  // Exclude partial seasons from regression fit
+  const pts = data.filter(d => !partialSeasons.includes(d.x));
+  const n = pts.length;
+  if (n < 2) return null;
+  const xs = pts.map((_, i) => i);
+  const ys = pts.map(d => d.y);
+  const mx = xs.reduce((a,b) => a+b, 0) / n;
+  const my = ys.reduce((a,b) => a+b, 0) / n;
+  const num = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0);
+  const den = xs.reduce((s, x) => s + (x - mx) ** 2, 0);
+  const slope = num / den;
+  const intercept = my - slope * mx;
+  // Return fitted values across all data points (including partial, for visual continuity)
+  return data.map((d, i) => {
+    // Find position in full array for extrapolation
+    const xi = data.indexOf(d);
+    return { x: d.x, y: +(slope * xi + intercept).toFixed(2) };
+  });
+}
+
 function buildDatasets(divKey) {
   const data = getLineData(divKey);
   const color = divKey === 'all' ? '#e8e8ec' : divColors[divKey];
-  return [{
+  const trend = linReg(data);
+  const datasets = [{
     label: divKey === 'all' ? 'All tiers' : divKey,
     data,
     borderColor: color,
@@ -240,6 +232,20 @@ function buildDatasets(divKey) {
     pointBackgroundColor: data.map(d => partialSeasons.includes(d.x) ? '#f0a500' : noFanSeasons.includes(d.x) ? '#ffffff' : color),
     tension: 0.3
   }];
+  if (trend) {
+    datasets.push({
+      label: '__trend__',
+      data: trend,
+      borderColor: color,
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderDash: [6, 3],
+      pointRadius: 0,
+      tension: 0,
+      tooltip: false
+    });
+  }
+  return datasets;
 }
 
 const lineCtx = document.getElementById('lineChart').getContext('2d');
@@ -255,6 +261,7 @@ const lineChart = new Chart(lineCtx, {
       tooltip: {
         backgroundColor: '#1c1c21', borderColor: '#2a2a32', borderWidth: 1,
         titleColor: '#7a7a8c', bodyColor: '#e8e8ec',
+        filter: item => item.dataset.label !== '__trend__',
         callbacks: {
           title: items => items[0].label,
           label: item => ` ${item.dataset.label}: +${item.parsed.y.toFixed(1)}% HGA`
@@ -263,7 +270,7 @@ const lineChart = new Chart(lineCtx, {
     },
     scales: {
       x: { type: 'category', ticks: { color: '#7a7a8c', font: { family: 'DM Mono', size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 16 }, grid: { color: '#1e1e26' } },
-      y: { min: -5, max: 25, ticks: { color: '#7a7a8c', font: { family: 'DM Mono', size: 10 }, callback: v => v + '%' }, grid: { color: '#1e1e26' } }
+      y: { min: 0, ticks: { color: '#7a7a8c', font: { family: 'DM Mono', size: 10 }, callback: v => v + '%' }, grid: { color: '#1e1e26' } }
     }
   },
   plugins: [{
@@ -293,64 +300,7 @@ function toggleDiv(btn) {
   lineChart.update();
 }
 
-// Heatmap
-function hgaToColor(hga) {
-  if (hga === null) return '#141417';
-  const min = -5, max = 25;
-  if (hga <= 0) {
-    const t = Math.max(0, (hga - min) / (0 - min));
-    return `rgb(${Math.round(59+t*(68-59))},${Math.round(139+t*(68-139))},${Math.round(235+t*(170-235))})`;
-  } else {
-    const t = Math.min(1, hga / max);
-    return `rgb(${Math.round(68+t*(224-68))},${Math.round(68+t*(90-68))},${Math.round(170+t*(43-170))})`;
-  }
-}
 
-function buildHeatmap() {
-  const container = document.getElementById('heatmap-container');
-  const cols = allSeasons;
-  const cellW = Math.max(16, Math.floor((container.offsetWidth - 130) / cols.length));
-  let html = `<div style="display:flex;align-items:flex-start;"><div class="heatmap-labels-y">`;
-  divisions.forEach(d => { html += `<div class="heatmap-label-y" style="color:${divColors[d]}">${d}</div>`; });
-  html += `</div><div style="flex:1;overflow-x:auto;"><div style="display:flex;gap:2px;margin-bottom:4px;">`;
-  cols.forEach(s => { html += `<div style="width:${cellW}px;flex-shrink:0;font-family:'DM Mono',monospace;font-size:9px;color:#7a7a8c;text-align:center;transform:rotate(-45deg);transform-origin:bottom center;height:32px;display:flex;align-items:flex-end;justify-content:center;">${s.split('/')[0].slice(2)}</div>`; });
-  html += `</div>`;
-  divisions.forEach(div => {
-    html += `<div style="display:flex;gap:2px;margin-bottom:2px;">`;
-    cols.forEach(season => {
-      const d = lookup[season]?.[div];
-      const hga = d ? d.hga : null;
-      const border = partialSeasons.includes(season) ? '1px solid #f0a500' : noFanSeasons.includes(season) ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent';
-      html += `<div style="width:${cellW}px;height:22px;flex-shrink:0;border-radius:2px;background:${hgaToColor(hga)};cursor:${hga!==null?'pointer':'default'};border:${border};" onmouseenter="showTip(event,'${season}','${div}',${d?d.hg:'null'},${d?d.ag:'null'},${hga!==null?hga.toFixed(3):'null'})" onmouseleave="hideTip()"></div>`;
-    });
-    html += `</div>`;
-  });
-  html += `</div></div>`;
-  container.innerHTML = html;
-}
-
-function showTip(e, season, div, hg, ag, hga) {
-  if (hga === null || hga === 'null') return;
-  document.getElementById('tt-season').textContent = season + (partialSeasons.includes(season) ? ' (partial)' : noFanSeasons.includes(season) ? ' (no fans)' : '');
-  document.getElementById('tt-div').textContent = div;
-  document.getElementById('tt-hg').textContent = hg;
-  document.getElementById('tt-ag').textContent = ag;
-  document.getElementById('tt-hga').textContent = (parseFloat(hga) >= 0 ? '+' : '') + parseFloat(hga).toFixed(1) + '%';
-  const tt = document.getElementById('tooltip');
-  tt.style.left = (e.clientX + 14) + 'px';
-  tt.style.top = (e.clientY - 10) + 'px';
-  tt.classList.add('visible');
-}
-
-function hideTip() { document.getElementById('tooltip').classList.remove('visible'); }
-
-document.addEventListener('mousemove', e => {
-  const tt = document.getElementById('tooltip');
-  if (tt.classList.contains('visible')) { tt.style.left = (e.clientX+14)+'px'; tt.style.top = (e.clientY-10)+'px'; }
-});
-
-buildHeatmap();
-window.addEventListener('resize', buildHeatmap);
 </script>
 </body>
 </html>
