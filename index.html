@@ -85,20 +85,19 @@
       <div class="anno-item"><div style="width:18px;height:1px;border-top:1px dashed #3a3a48"></div>0% parity</div>
       <div class="anno-item"><div style="width:18px;height:0;border-top:1.5px dashed #888"></div>Linear trend</div>
       <div class="anno-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid var(--muted)"></div>Shaded = no fans (2020/21)</div>
-      <div class="anno-item"><div style="width:10px;height:10px;border-radius:50%;background:rgba(240,165,0,0.2);border:1px solid var(--accent)"></div>2025/26 = partial season</div>
     </div>
   </div>
 
   <div class="footnotes">
     <p class="footnote">† <strong>HGA (Home Goal Advantage)</strong> = (Home goals ÷ Away goals − 1) × 100. A value of 0% means exact parity; a positive value means home teams scored proportionally more goals than away teams in aggregate.</p>
     <p class="footnote">§ Season <strong>2020/21</strong> was played entirely behind closed doors due to the COVID-19 pandemic. The sharp drop in HGA during this period is widely attributed to the absence of crowd effects.</p>
-    <p class="footnote">¶ <strong>2025/26</strong> reflects a partial season in progress and should be interpreted with caution.</p>
+
   </div>
 </main>
 
 <script>
 const raw = [
-  ["Premier League","2025/26",382,463],["Championship","2025/26",589,679],["League 1","2025/26",537,727],["League 2","2025/26",596,667],["National League","2025/26",689,814],
+  ["Premier League","2025/26",465,580],["Championship","2025/26",665,773],["League 1","2025/26",636,816],["League 2","2025/26",665,757],["National League","2025/26",736,874],
   ["Premier League","2024/25",540,575],["Championship","2024/25",561,792],["League 1","2024/25",652,775],["League 2","2024/25",620,757],["National League","2024/25",662,826],
   ["Premier League","2023/24",562,684],["Championship","2023/24",662,818],["League 1","2023/24",649,778],["League 2","2023/24",744,901],["National League","2023/24",724,899],
   ["Premier League","2022/23",463,621],["Championship","2022/23",611,731],["League 1","2022/23",633,781],["League 2","2022/23",586,708],["National League","2022/23",690,850],
@@ -136,7 +135,7 @@ const raw = [
 const divisions = ["Premier League","Championship","League 1","League 2","National League"];
 const divColors = {"Premier League":"#f0a500","Championship":"#3b8beb","League 1":"#5dbf6e","League 2":"#c45fc4","National League":"#e05a2b"};
 const noFanSeasons = ["2020/21"];
-const partialSeasons = ["2025/26"];
+const partialSeasons = [];
 
 const allSeasons = [...new Set(raw.map(d => d[1]))].sort();
 
