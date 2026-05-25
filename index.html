@@ -176,7 +176,7 @@ document.getElementById('stat-strip').innerHTML = `
   </div>
   <div class="stat-card">
     <div class="stat-label">HGA in 2025/26</div>
-    <div class="stat-value">+${s2425.toFixed(1)}%</div>
+    <div class="stat-value">+${(Math.floor(s2425 * 10) / 10).toFixed(1)}%</div>
     <div class="stat-sub">All tiers combined, latest full season</div>
     <div class="stat-delta delta-down">▼ ${(s9394 - s2425).toFixed(1)}pp vs 1993/94</div>
   </div>
