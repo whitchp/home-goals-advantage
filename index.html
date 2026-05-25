@@ -63,7 +63,7 @@
 <header>
   <div class="eyebrow">English Football Analysis · Tiers 1–5 · 1993/94–2025/26</div>
   <h1>The Fading <span>Home Advantage</span></h1>
-  <p class="subtitle">Three decades of data reveal a long-term structural decline in home team dominance across English football's top five tiers.</p>
+  <p class="subtitle">Three decades of goal data reveal a long structural decline in home team dominance across English football's top five tiers.</p>
 </header>
 
 <div class="stat-strip" id="stat-strip"></div>
@@ -161,7 +161,7 @@ const agg = s => {
 let tHG = 0, tAG = 0;
 raw.forEach(([div, season, ag, hg]) => { if (!partialSeasons.includes(season)) { tHG += hg; tAG += ag; } });
 const overall = (tHG / tAG - 1) * 100;
-const s9394 = agg("1993/94"), s2425 = agg("2024/25"), s2021 = agg("2020/21");
+const s9394 = agg("1993/94"), s2425 = agg("2025/26"), s2021 = agg("2020/21");
 
 document.getElementById('stat-strip').innerHTML = `
   <div class="stat-card">
@@ -175,7 +175,7 @@ document.getElementById('stat-strip').innerHTML = `
     <div class="stat-sub">All tiers combined, first season</div>
   </div>
   <div class="stat-card">
-    <div class="stat-label">HGA in 2024/25</div>
+    <div class="stat-label">HGA in 2025/26</div>
     <div class="stat-value">+${s2425.toFixed(1)}%</div>
     <div class="stat-sub">All tiers combined, latest full season</div>
     <div class="stat-delta delta-down">▼ ${(s9394 - s2425).toFixed(1)}pp vs 1993/94</div>
