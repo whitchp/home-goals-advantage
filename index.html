@@ -192,8 +192,8 @@ document.getElementById('stat-strip').innerHTML = `
 let activeDiv = 'all';
 
 function getLineData(divKey) {
-  if (divKey === 'all') return allSeasons.map(s => ({ x: s, y: +allTiersHGA[s].toFixed(2) }));
-  return allSeasons.filter(s => lookup[s]?.[divKey]).map(s => ({ x: s, y: +lookup[s][divKey].hga.toFixed(2) }));
+  if (divKey === 'all') return allSeasons.map(s => ({ x: s, y: allTiersHGA[s] }));
+  return allSeasons.filter(s => lookup[s]?.[divKey]).map(s => ({ x: s, y: lookup[s][divKey].hga }));
 }
 
 function linReg(data) {
@@ -263,7 +263,7 @@ const lineChart = new Chart(lineCtx, {
         filter: item => item.dataset.label !== '__trend__',
         callbacks: {
           title: items => items[0].label,
-          label: item => ` ${item.dataset.label}: +${item.parsed.y.toFixed(1)}% HGA`
+          label: item => ` ${item.dataset.label}: +${(Math.floor(item.parsed.y * 10) / 10).toFixed(1)}% HGA`
         }
       }
     },
