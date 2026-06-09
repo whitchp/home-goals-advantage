@@ -262,6 +262,7 @@ const lineChart = new Chart(lineCtx, {
   options: {
     responsive: true,
     maintainAspectRatio: true,
+    layout: { padding: { right: 12 } },
     interaction: { mode: 'index', intersect: false },
     plugins: {
       legend: { display: false },
@@ -276,7 +277,23 @@ const lineChart = new Chart(lineCtx, {
       }
     },
     scales: {
-      x: { type: 'category', ticks: { color: '#7a7a8c', font: { family: 'DM Mono', size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 16 }, grid: { color: '#1e1e26' } },
+      x: {
+        type: 'category',
+        afterFit: (scale) => { scale.paddingRight = 30; },
+        ticks: {
+          color: '#7a7a8c',
+          font: { family: 'DM Mono', size: 9 },
+          maxRotation: 45,
+          autoSkip: false,
+          callback: function(val, index) {
+            const label = this.getLabelForValue(val);
+            const lastSeason = allSeasons[allSeasons.length - 1];
+            if (label === lastSeason || index % 2 === 0) return label;
+            return null;
+          }
+        },
+        grid: { color: '#1e1e26' }
+      },
       y: { min: 0, ticks: { color: '#7a7a8c', font: { family: 'DM Mono', size: 10 }, callback: v => v + '%' }, grid: { color: '#1e1e26' } }
     }
   },
